@@ -13,11 +13,11 @@ export default function RootLayout({
         head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
       */}
       <head />
-      <body>
+      <body className="bg-gray-100 dark:bg-zinc-900 transition-all duration-700">
         <header>
           <Header />
         </header>
-        <main>{children}</main>
+        <main className="max-w-6xl mx-auto">{children}</main>
       </body>
     </html>
   );
