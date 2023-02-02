@@ -2,13 +2,14 @@
 
 import { categories } from "@/constants";
 
+import fetchNews from "@/lib/fetchNews";
+
 const page = async () => {
   //fetch the news data
-  const news: NewsResponse = await fecthNews(categories.join(","));
+  const news: NewsResponse = await fetchNews(categories.join(","));
 
-  return <div>{/* newslist */}</div>;
+  console.log(news);
+
+  return <div>data</div>;
 };
 export default page;
-function fecthNews(arg0: string): NewsResponse | PromiseLike<NewsResponse> {
-  throw new Error("Function not implemented.");
-}

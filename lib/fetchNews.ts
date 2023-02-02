@@ -1,33 +1,33 @@
 import { gql } from "graphql-request";
+import sortNewsByImage from "./sortNewsByImage";
 
 const fetchNews = async (
   category?: Category | string,
   keywords?: string,
   isDynamic?: boolean
 ) => {
-  //graphQL query
   const query = gql`
-    query MyQuery(
-      $access_key: String!
-      $categories: String!
+    query myQuery(
+      $access_key: String
+      $countries: String
       $keywords: String
+      $categories: String
     ) {
       myQuery(
         access_key: $access_key
+        countries: $countries
+        keywords: $keywords
         categories: $categories
-        countries: "gb"
-        sort: "published_desc"
-        keyword: $keywords
       ) {
         data {
           author
           category
-          image
-          description
           country
+          description
+          image
           language
-          published_at
           source
+          published_at
           title
           url
         }
@@ -41,17 +41,38 @@ const fetchNews = async (
     }
   `;
 
-  //fetch function with nextjs 13 caching
+  const variables = {
+    access_key: process.env.MEADIASTACK_API_KEY,
+    countries: "in,us,gb",
+    keywords: keywords,
+    category: category,
+  };
 
   const res = await fetch(
-    "https://concepcion.stepzen.net/api/rousing-maltese/__graphql",
+    "https://werl.stepzen.net/api/reeling-bee/__graphql",
     {
       method: "POST",
+
+      cache: isDynamic ? "no-cache" : "default",
+      next: isDynamic ? { revalidate: 0 } : { revalidate: 20 },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `ApiKey ${process.env.STEPZEN_API_KEY}`,
+      },
+      body: JSON.stringify({
+        query,
+        variables: variables,
+      }),
     }
   );
 
-  //sort by image by not images
-  //return
+  const myResponse = await res.json();
+
+  console.log(myResponse);
+
+  const news = sortNewsByImage(myResponse.data.myQuery);
+
+  return news;
 };
 
 export default fetchNews;
